@@ -6,6 +6,6 @@
 *.order
 *.ko*
 .vscode
-.temp_versions
+.tmp_versions
 *.cmd
 
