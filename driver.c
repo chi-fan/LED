@@ -19,8 +19,18 @@ static void * direction;
 static void LED_init(void)
 {
 	//不启用中断
-	writel (readl(direction) | 0x10, direction);
-	writel (readl(data) | 0x10, data);
+	//读取direction寄存器数据
+	printk("direction : %x\n", readl(direction));
+	//将GPIO5_05引脚设置为输出引脚
+	writel (readl(direction) | 0x20, direction);
+
+	printk("direction : %x\n", readl(direction));
+
+	//读取data寄存器数据
+	printk("data: %x\n", readl(data));
+	//将GPIO5_05引脚电平拉低
+	writel (readl(data) & 0xFDF, data);
+	printk("data: %x\n", readl(data));
 }
  
 void LED_on(void)
@@ -65,12 +75,12 @@ static struct file_operations LED_ops=
 static int LED_probe(struct platform_device *pdev)
 {
 	int ret;	
-	printk("LED match ok!");
+	printk("LED match ok!\n");
 	
 
 	//映射地址
-	direction    = ioremap(pdev->resource[0].start, pdev->resource[0].end - pdev->resource[0].start);
-	data    	 = ioremap(pdev->resource[1].start, pdev->resource[1].end - pdev->resource[1].start);
+	data   			= ioremap(pdev->resource[0].start, pdev->resource[0].end - pdev->resource[0].start);
+	direction    	= ioremap(pdev->resource[1].start, pdev->resource[1].end - pdev->resource[1].start);
 
 	//注册设备号
 	devno = MKDEV(major,minor);
